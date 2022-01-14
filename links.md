@@ -1,4 +1,4 @@
+-   [周刊](https://github.com/ascoders/weekly)
 -   [30 seconds learn code](https://www.30secondsofcode.org)
 -   [wangdoc](https://wangdoc.com/)
--   [interviews](https://github.com/kdn251/interviews)
--   [周刊](https://github.com/ascoders/weekly)
+-   [知识图谱](https://f2e.tech/home)
