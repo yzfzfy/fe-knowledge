@@ -10,7 +10,6 @@ requirejs.config({
     // 如果不想用baseUrl+paths的方式查找模块，可用下列三种方式
     // 1.值以.js结尾  2.值以/开头  3.值以协议http://或https://开头
     paths: {
-        jquery: 'lib/jquery-3.6.0.min',
         // message: 'app/message',
         // print: 'app/print',
     },
