@@ -2,3 +2,6 @@
 -   [30 seconds learn code](https://www.30secondsofcode.org)
 -   [wangdoc](https://wangdoc.com/)
 -   [知识图谱](https://f2e.tech/home)
+-   [卤蛋实验室](https://supercodepower.com/)
+-   [业务复杂度不够，如何持续深挖](https://mp.weixin.qq.com/s/WiS9XgpQxwe1XsJ8Eylkng)
+-   [popular project and repo](https://bestofjs.org/)

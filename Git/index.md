@@ -103,4 +103,8 @@ git fetch [remote] [branchname]
 
 ## git cherry-pick
 
-## git rever
+## git revert
+
+## git bisect 二分法,快速定位疑难 Bug
+
+用法: `git bisect start [最近的出错的 commitid] [较远的正确的 commitid]`, 执行结果是会切换到一个新的 commit,测试功能,当功能没有问题时，`git bisect good` 标记正确，当有问题时，`git bisect bad`标记错误,最终提示的 commitid 就是导致问题的那次提交.
