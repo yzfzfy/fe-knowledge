@@ -78,7 +78,7 @@ git fetch [remote] [branchname]
 
 ## git push
 
--   [ -d branchName ] 删除远程分支
+-   [ origin -d branchName ] 删除远程分支
 -   [ --tags ] 推送本地所有 tag 到远程
 -   [ origin branchName ] 推送本地仓库内容到远程
 

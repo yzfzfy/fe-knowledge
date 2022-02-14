@@ -11,3 +11,4 @@
 -   [CS-Notes](http://www.cyc2018.xyz/)
 -   [每日时报](https://wubaiqing.github.io/zaobao/)
 -   [树形目录生成器](https://devtool.tech/tree)
+-   [前端真好玩](https://github.com/KieSun/all-of-frontend)
