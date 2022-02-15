@@ -17,7 +17,7 @@ typeof 返回的结果有几种(都是小写)：boolean、number、undefined、s
 如果想进一步的检查类型。
 
 1. 可使用 instanceof。a instanceof B。原理是检查 B 的原型是否出现在 a 的原型链上。有则为 true。(也可能有误差)
-2. 可使用 Object.prototype.toString。Object.prototype.toString.call(a);原理是 Object.prototype.toString()返回的值是一个字符串。包含了创建该值时最终调用的构造函数是哪个。
+2. 可使用 Object.prototype.toString.call(a);原理是 Object.prototype.toString()返回的值是一个字符串。包含了创建该值时最终调用的构造函数是哪个。
 
 Object.prototype.toString.call(new Map()) === ‘[object Map]’
 Object.prototype.toString.call(new Set()) === ‘[object Set]’
@@ -29,26 +29,26 @@ Object.prototype.toString.call(new Date()) === ‘[object Date]’
 
 1. 如果 this 值是 undefined，就返回 [object Undefined]
 2. 如果 this 的值是 null，就返回 [object Null]
-3. 让 O 成为 ToObject(this) 的结果
+3. 让 O 成为 ToObject(this) (包装对象)的结果
 4. 让 class 成为 O 的内部属性 [[Class]] 的值
 5. 最后返回由 "[object " 和 class 和 "]" 三个部分组成的字符串
 
 Object.prototype.toString 的结果有：
 
 1. [object Number]
-1. [object String]
-1. [object Boolean]
-1. [object Null]
-1. [object Undefined]
-1. [object Object]
-1. [object Array]
-1. [object Date]
-1. [object Error]
-1. [object RegExp]
-1. [object Function]
-1. [object Math]
-1. [object JSON]
-1. [object Arguments]
+2. [object String]
+3. [object Boolean]
+4. [object Null]
+5. [object Undefined]
+6. [object Object]
+7. [object Array]
+8. [object Date]
+9. [object Error]
+10. [object RegExp]
+11. [object Function]
+12. [object Math]
+13. [object JSON]
+14. [object Arguments]
 
 ## 利用 toString 判断类型的工具方法
 
@@ -62,7 +62,7 @@ var class2type = {};
 });
 
 function type(obj) {
-    // 一箭双雕
+    // 一箭双雕（类型判断时，一边是null时，另一边只有是undefined或null时才会为true）
     if (obj == null) {
         return obj + '';
     }
@@ -217,15 +217,9 @@ null 和 undefined 属于例外，当将它们用在期望是一个对象的地�
 在上边判断 isPlainObject 中有，Object.prototype.toString 方法会根据这个对象的[[class]]内部属性，返回由 "[object " 和 class 和 "]" 三个部分组成的字符串。举个例子：
 
 ```js
-Object.prototype.toString
-    .call({ a: 1 })(
-        // "[object Object]"
-        { a: 1 },
-    )
-    .toString()(
-    // "[object Object]"
-    { a: 1 },
-).toString === Object.prototype.toString; // true
+Object.prototype.toString.call({ a: 1 }); // "[object Object]"
+({ a: 1 }.toString()); // "[object Object]"
+({ a: 1 }.toString === Object.prototype.toString); // true
 ```
 
 我们可以看出当调用对象的 toString 方法时，其实调用的是 Object.prototype 上的 toString 方法。
@@ -296,7 +290,7 @@ ToPrimitive(input[, PreferredType])
 
 ### 对象转字符串
 
-对象转字符串(就是 Number() 函数)可以概括为：
+对象转字符串(就是 String() 函数)可以概括为：
 
 1. 如果对象具有 toString 方法，则调用这个方法。如果他返回一个原始值，JavaScript 将这个值转换为字符串，并返回这个字符串结果。
 2. 如果对象没有 toString 方法，或者这个方法并不返回一个原始值，那么 JavaScript 会调用 valueOf 方法。如果存在这个方法，则 JavaScript 调用它。如果返回值是原始值，JavaScript 将这个值转换为字符串，并返回这个字符串的结果。
@@ -315,3 +309,59 @@ ToPrimitive(input[, PreferredType])
 [JSON.stringify](https://github.com/mqyqingfeng/Blog/issues/159)
 
 ## 隐式类型转换
+
+上述的都是显式的做类型转换。在些情况下，会隐藏的对于数据做类型转换。
+
+### 一元操作符 +
+
+当 + 运算符作为一元操作符的时候，会调用 ToNumber 处理该值。用上述的显式类型转换就可以。
+
+### 二元操作符 + （1+[]）
+
+规范翻译当计算 value1 + value2 时：
+
+1. lprim = ToPrimitive(value1)（这里的第二个参数没传，当 value1 是时间类型时，第二个参数默认为 string，其他的为 number）
+2. rprim = ToPrimitive(value2)
+3. 如果 lprim 是字符串或者 rprim 是字符串，那么返回 ToString(lprim) 和 ToString(rprim)的拼接结果
+4. 否则返回 ToNumber(lprim) 和 ToNumber(rprim)的运算结果。
+
+### ==相等 x == y
+
+当用==比较当个类型不一样的值的时候，就会发生类型转换。
+
+先看两遍类型一样时的情况：
+
+1. x 是 Undefined，返回 true
+2. x 是 Null，返回 true
+3. x 是数字：
+    1. x 是 NaN，返回 false
+    1. y 是 NaN，返回 false
+    1. x 与 y 相等，返回 true
+    1. x 是+0，y 是-0，返回 true
+    1. x 是-0，y 是+0，返回 true 6.返回 false
+4. x 是字符串，完全相等返回 true,否则返回 false
+5. x 是布尔值，x 和 y 都是 true 或者 false，返回 true，否则返回 false
+6. x 和 y 指向同一个对象，返回 true，否则返回 false
+
+再看当两边类型不一致时的情况：
+
+// 也就是当两个值，一个是 null，另外一个是 undefined 时，为 true
+
+1. x 是 null 并且 y 是 undefined，返回 true
+2. x 是 undefined 并且 y 是 null，返回 true
+   // 也就是一个是字符串另一个是数字时，将字符串转换为数字再比较
+3. x 是数字，y 是字符串，判断 x == ToNumber(y)
+4. x 是字符串，y 是数字，判断 ToNumber(x) == y
+   // 当有一个值是布尔时，就将布尔值转为数字再比较
+5. x 是布尔值，判断 ToNumber(x) == y
+6. y 是布尔值，判断 x ==ToNumber(y)
+   // 也就是一个是字符串另一个是对象时，将对象转换为原始值再比较
+7. x 是字符串或者数字，y 是对象，判断 x == ToPrimitive(y)
+8. x 是对象，y 是字符串或者数字，判断 ToPrimitive(x) == y
+   // 其他情况返回 false
+9. 返回 false
+
+特殊的:
+
+-   "" == [null] == [undefined]
+-   Number("\r") == Number("\t") == Number("\n")
