@@ -334,4 +334,20 @@ chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.pus
 
 ### 重要配置项的用法和原理
 
+-   mode 打包模式。`development`与`production`。两种模式的主要区别是打包过程启用或关闭一些插件或功能
+-   entry 入口路径。webpack 开始分析代码依赖关系、生成依赖树的开始分析的文件。spa 项目文件一般是`src/index.js`
+-   output 输出配置。webpack 项目打包完毕，生成打包结果后，需要将处理过的 js 文件放到本地目录下的配置。
+    -   path 输出文件目录 如 react 项目默认的 build 目录
+    -   pathinfo 打包的 bundle 中是否需要写入 bundle 中包含了哪些原始模块的信息。这个值在 develop 下默认 true，prod 下默认 false
+    -   filename 生成的文件的文件名。开发模式下，一般会开启一个本地服务器，不真实写入一个文件，而是在内存中。生产模式下会生成 js 文件，如果单个入口那就只生成一个文件就可以了，如果多个入口，那就需要为文件命名一个规则，。一个常用的定义文件名的`static/js/[name].[contenthash:8].chunk.js`。（注意这个选项不会影响懒加载等不是初始化时就加载文件的文件命名）
+    -   chunkFilename 非初始化 chunk 文件命名。
+    -   publicPath 该值指定了当前打包过程结束之后，生成的文件在浏览器中运行时，文件引用的 publich url（公开 url）。这个选项的值会在 webpack 运行时和 loader 作用时添加到每个资源路径的前缀。可以理解为项目在运行时，资源文件相对于 html 页面的地址。下列可能值
+        -   'https://cdn.example.com/assets/', 资源在 cdn 上
+        -   '//cdn.example.com/assets/' 资源在 cdn 上，区别是与当前页面协议相同
+        -   '/assets/' server-relative
+        -   'assets/' relative to HTML page
+        -   '../assets/' relative to HTML page
+        -   '' // relative to HTML page (same directory)
+    -
+
 ### 调试
