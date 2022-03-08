@@ -337,17 +337,108 @@ chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.pus
 -   mode 打包模式。`development`与`production`。两种模式的主要区别是打包过程启用或关闭一些插件或功能
 -   entry 入口路径。webpack 开始分析代码依赖关系、生成依赖树的开始分析的文件。spa 项目文件一般是`src/index.js`
 -   output 输出配置。webpack 项目打包完毕，生成打包结果后，需要将处理过的 js 文件放到本地目录下的配置。
+
     -   path 输出文件目录 如 react 项目默认的 build 目录
     -   pathinfo 打包的 bundle 中是否需要写入 bundle 中包含了哪些原始模块的信息。这个值在 develop 下默认 true，prod 下默认 false
     -   filename 生成的文件的文件名。开发模式下，一般会开启一个本地服务器，不真实写入一个文件，而是在内存中。生产模式下会生成 js 文件，如果单个入口那就只生成一个文件就可以了，如果多个入口，那就需要为文件命名一个规则，。一个常用的定义文件名的`static/js/[name].[contenthash:8].chunk.js`。（注意这个选项不会影响懒加载等不是初始化时就加载文件的文件命名）
     -   chunkFilename 非初始化 chunk 文件命名。
     -   publicPath 该值指定了当前打包过程结束之后，生成的文件在浏览器中运行时，文件引用的 publich url（公开 url）。这个选项的值会在 webpack 运行时和 loader 作用时添加到每个资源路径的前缀。可以理解为项目在运行时，资源文件相对于 html 页面的地址。下列可能值
+
         -   'https://cdn.example.com/assets/', 资源在 cdn 上
         -   '//cdn.example.com/assets/' 资源在 cdn 上，区别是与当前页面协议相同
         -   '/assets/' server-relative
         -   'assets/' relative to HTML page
         -   '../assets/' relative to HTML page
         -   '' // relative to HTML page (same directory)
-    -
+
+        有的时候 publicPath 可以不在配置文件中指定，可以在打包应用的入口文件中赋值,如：`__webpack_public_path__ = myRuntimePublicPath;`
+
+    -   globalObject 默认值 window。在 libraryTarget 为 umd 时，该值就是库导出对象挂载的目标对象。
+    -   library 输出一个暴漏打包入口处的导出的对象 key。比如 globalObject 设置为 window，libraryTarget 设置为'umd'时，在打包入口文件有如下代码
+
+    ```js
+    export function fn() {}
+    ```
+
+    如果将 library 设置为 Mylibrary，那么就有
+
+    ```js
+    window.Mylibrary = {
+        fn: function () {},
+        ...
+    }
+    ```
+
+    -   devtool 该选项控制 source map 文件是否生成，或者怎么生成。sourcemap 文件是为了调试时将打包过的代码对应源码。但是如果生成 source map 会影响打包的速度和打包的结果。该值的构成格式`[inline-|hidden-|eval-][nosources-][cheap-[module-]]source-map`可选值的前后顺序不能颠倒
+
+-   resolve 这个选项是为了配置模块到底是怎么解析的。
+
+    -   alias 创建一系列模块别名。也就是代码中`require`或`import`的参数。设置后可以不使用相对路径来引入模块。如：
+
+    ```js
+    alias: {
+        Utilities: path.resolve(__dirname, 'src/utilities/'),
+    },
+
+    // 使用
+    import Utility from 'Utilities/utility';
+    ```
+
+    -   extensions 该值是一个数组，提供一个 webpack 解析模块时，自动匹配相应扩展名的模块文件。挨个匹配，匹配到有相应文件时，就停止匹配文件。默认值为['.js', '.json', '.wasm']。如引用模块的方式为`import File from '../path/to/file';`会按 file.js、file.json、file.wasm 顺序匹配。
+    -   modules 解析模式时，告诉 webpack 在哪个路径下搜索模块，默认值就是`['node_modules']`。
+    -   plugins 其他在 webpack 解析模块时会被应用的解析插件。比如在 cra 中的`ModuleScopePlugin`插件。一般来说，对于开发者，只允许引用 src/目录中的模块代码，换句话说就是 src 目录就是我们的源代码目录，我们不希望我们的源代码在 src 之外。这个插件的作用就是阻止开发者从 src 之外的目录中引入模块（当然除了 node_modules，他有特殊的解析规则）。当使用相对路径访问 src 之外的文件时，webpack 会发出警告。
+
+-   module 我们的代码中可能不只有 js、ts、json 文件等。还可能有样式文件、图片资源文件等。webpack 默认只支持 js 文件的解析。当遇到非 js 文件时，就需要设置这些特定文件需要怎么解析的规则。配置项主要是配置 rules 字段。该字段值是一个数组，其中数组每一项都是一个配置对象，该对象中关于条件配置的字段分为两类，一类是关于 resource 的，另一类是关于 issuer 的。其中`test`、`include`、`exclude`、`resource`是关于 resource 的，而`issuer`是关于 issuer 的。另外还有关于结果的配置`loader`、`options`、`use`,当条件的字段校验通过时，才会应用结果的配置。常用配置字段:
+    -   test 可能值 1.字符串。那么模块路径的输入值必须是以该字符串开头。2. 正则表达式 （常用）3.函数，返回一个 boolean 值 4.数组 满足所有数组项 5.对象 是这样的形式。[condition].(https://webpack.js.org/configuration/module/#condition)（注意这5个规则是关于条件的配置，也就是也适用于include、exclude等配置）
+    -   use loader 的作用顺序是从后往前处理的。
+    ```js
+    use: [
+        // 不需配置项，只写loader名称
+        'style-loader',
+        // 需要配置项的
+        {
+            loader: 'css-loader',
+            options: {},
+        },
+    ];
+    ```
+-   optimization 常用的配置项
+
+    -   minimize 布尔值 表示是否压缩 bundle。默认是使用内置插件`TerserPlugin`,也可以自定义压缩插件 - minimizer 上述所说的自定义压缩插件 Array[]
+    -   splitChunks 分割 chunk 文件。webpack4.0 版本后对于动态加载的模块有默认的开箱即用的通用分割策略。内部是通过 SplitChunksPlugin 执行的，所以支持传入该插件支持的一些配置.(之前的 CommonChunksPlugin 也做了一些工作来防止依赖的同样模块被打包两次，但是这还远远不够，4.0 版本之后，该插件被移除，增加了支持配置 splitChunks).下列该插件的配置说明:
+
+        -   1.正常情况下默认只会影响按需加载的 chunk。2.进一步多个模块共享或者来自于 node_modules 中的模块也会被处理。3.超过 20k 的 chunk 也会被处理 4.等等
+        -   列是该插件的默认配置项
+
+            ```js
+            splitChunks: {
+                chunks: 'async',
+                minSize: 20000,
+                minRemainingSize: 0,
+                minChunks: 1,
+                maxAsyncRequests: 30,
+                maxInitialRequests: 30,
+                enforceSizeThreshold: 50000,
+                cacheGroups: {
+                    defaultVendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10,
+                    reuseExistingChunk: true,
+                    },
+                    default: {
+                    minChunks: 2,
+                    priority: -20,
+                    reuseExistingChunk: true,
+                    },
+                },
+                },
+            ```
+
+        -   chunks `string = 'async'` `function (chunk)` 该值为了设置哪些 chunks 需要优化。 当为 string 时，三个可选值`all`、 `async` 、 `initial`
+        -   cacheGroups [{}]
+            -   priority 一个模块可能属于多个 cache group。这选项设置该组在所有组中的优先级。默认-20
+            -   reuseExistingChunk 如果当前 chunk 包含了已经被从主模块分离出去的模块，是否再生成一个新的 chunk。默认为 true。一般不改。
+            -   test 一般使用正则的值使用。
+            -   enforce 是否忽略其他选项的影响。如： minSize、minChunks、maxAsyncRequests maxInitialRequests。
 
 ### 调试
