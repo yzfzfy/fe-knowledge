@@ -1,9 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import _ from 'lodash';
 import './index.css';
 
-function Default() {
-    return <div>123</div>;
-}
-
-ReactDOM.render(<Default />, document.getElementById('root'));
+console.log(_.pick({ name: 123 }, 'name'));
+// console.log(object);

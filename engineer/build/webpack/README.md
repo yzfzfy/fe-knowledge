@@ -404,7 +404,8 @@ chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.pus
     ```
 -   optimization 常用的配置项
 
-    -   minimize 布尔值 表示是否压缩 bundle。默认是使用内置插件`TerserPlugin`,也可以自定义压缩插件 - minimizer 上述所说的自定义压缩插件 Array[]
+    -   minimize 布尔值 表示是否压缩 bundle。默认是使用内置插件`TerserPlugin`,也可以自定义压缩插件
+    -   minimizer 上述所说的自定义压缩插件 Array[]
     -   splitChunks 分割 chunk 文件。webpack4.0 版本后对于动态加载的模块有默认的开箱即用的通用分割策略。内部是通过 SplitChunksPlugin 执行的，所以支持传入该插件支持的一些配置.(之前的 CommonChunksPlugin 也做了一些工作来防止依赖的同样模块被打包两次，但是这还远远不够，4.0 版本之后，该插件被移除，增加了支持配置 splitChunks).下列该插件的配置说明:
 
         -   1.正常情况下默认只会影响按需加载的 chunk。2.进一步多个模块共享或者来自于 node_modules 中的模块也会被处理。3.超过 20k 的 chunk 也会被处理 4.等等
@@ -440,5 +441,10 @@ chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.pus
             -   reuseExistingChunk 如果当前 chunk 包含了已经被从主模块分离出去的模块，是否再生成一个新的 chunk。默认为 true。一般不改。
             -   test 一般使用正则的值使用。
             -   enforce 是否忽略其他选项的影响。如： minSize、minChunks、maxAsyncRequests maxInitialRequests。
+
+-   plugins 该选项的值是一个数组，数组每一项的值就是一个插件类的实例`new PluginClass()[]`。这里列一些常用的插件和用处
+    -   HtmlWebpackPlugin webpack 是打包 js 的，但是一般都是为了打包一个前端应用，就需要有一个 html 入口页面，这个插件主要需要配置一个模板 html 文件和其他选项。webpack 打包结果会把打包后的需要初始化加载的 js 自动在 script 标签中引入，这个就是作为本应用的入口页面。
+    -   webpack.HotModuleReplacementPlugin 开发模式下热更新插件
+    -   BundleAnalyzerPlugin 分析打包结果的插件
 
 ### 调试
