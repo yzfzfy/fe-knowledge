@@ -3,7 +3,7 @@
 ## 常见用法
 
 ```jsx
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 <Router>
     <Switch>
