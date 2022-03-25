@@ -46,4 +46,88 @@ sales.listen('100', function (price) {
 // 发布
 sales.trigger('88', 200000); // 88平米的房子价格是：200000
 sales.trigger('100', 300000); // 100平米的房子价格是：300000
+
+// 取消订阅
+var sales = {
+    clientList: {},
+    listen: function (key, fn) {},
+    trigger: function () {},
+    remove: function (type) {
+        var fns = this.clientList[type];
+        if (!fns || fns.length < 1) {
+            return false;
+        }
+        // 全部取消订阅
+        fns.length = 0;
+    },
+};
+```
+
+```js
+// 网站登录
+// 一个商场网站，有头部header，有导航nav，有购物车cart，有消息列表message等等模块度依赖于登录成功后的用户信息。而用户不知道什么时候会登陆。需要将以上各个模块与登录模块做一个发布-订阅
+// 一个真实的发布-订阅例子：网站登录
+var login = {
+    clientList: {},
+    listen: function (key, fn) {
+        if (!this.clientList[key]) {
+            this.clientList[key] = [];
+        }
+        this.clientList[key].push(fn);
+    },
+    trigger: function () {
+        var type = Array.prototype.shift.call(arguments);
+        var fns = this.clientList[type];
+        if (!fns || fns.length < 1) {
+            return false;
+        }
+        for (let index = 0; index < fns.length; index++) {
+            fns[index].apply(this, arguments);
+        }
+    },
+};
+
+// 头部
+var header = (function () {
+    login.listen('loginSuccess', function (data) {
+        header.setAvatar(data.avatar);
+    });
+    return {
+        setAvatar: function (avatar) {
+            console.log('设置header头像：' + avatar);
+        },
+    };
+})();
+
+// 导航
+var nav = (function () {
+    login.listen('loginSuccess', function (data) {
+        nav.setAvatar(data.avatar);
+    });
+    return {
+        setAvatar: function (avatar) {
+            console.log('设置nav头像：' + avatar);
+        },
+    };
+})();
+
+// 购物车
+var cart = (function () {
+    login.listen('loginSuccess', function (data) {
+        cart.getOrders(data);
+    });
+    return {
+        getOrders: function (data) {
+            console.log('获取' + data.name + '的购物车订单列表');
+        },
+    };
+})();
+
+setTimeout(function () {
+    // 依次输出
+    // 设置header头像：https://www.baidu.com/1.jpg
+    // 设置nav头像：https://www.baidu.com/1.jpg
+    // 获取AAA的购物车订单列表
+    login.trigger('loginSuccess', { name: 'AAA', avatar: 'https://www.baidu.com/1.jpg' });
+}, 1500);
 ```
