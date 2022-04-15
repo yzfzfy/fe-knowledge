@@ -75,6 +75,7 @@ git fetch [remote] [branchname]
 -   [-a] 展示本地仓库和本地远程库所有分支
 -   [-r] 展示本地远程库所有分支
 -   [-d branchName] 删除分支,-D 强制删除
+-   [--set-upstream-to=origin/远程分支名] 本地分支关联远程分支，
 
 ## git push
 
