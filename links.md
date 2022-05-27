@@ -15,3 +15,5 @@
 -   [颜海镜 专注 Web 前端](https://yanhaijing.com/)
 -   [MuYunyun/blog](http://muyunyun.cn/blog/z5dbvyod)
 -   [alexkondov.com](https://alexkondov.com/)
+-   [survivejs](https://survivejs.com/)
+-   [瓶子君博客](https://www.pzijun.cn/)
