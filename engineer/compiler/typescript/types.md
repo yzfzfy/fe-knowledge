@@ -1025,13 +1025,6 @@ type LocaleMessageIDs = `${Lang}_${AllLocaleIDs}`;
 [文档](https://github.com/mqyqingfeng/Blog/issues/232)
 [文档](https://github.com/mqyqingfeng/Blog/issues/233)
 
-```ts
-
-```
-
-```ts
-
-```
 
 ```ts
 
