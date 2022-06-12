@@ -166,3 +166,193 @@ React.cloneElement(
 
 1. 挂载中。组件的数据状态将反应到 dom 上。与这个阶段有关系的生命周期有`constructor`,`getDerivedStateFromProps`,`render`,`componentDidMount`
 2. 更新中。有两种方式可以将组件状态转化为更新中。props 改变和 state 改变（setState 和 forceUpdate）。与这个阶段有关系的生命周期有`getDerivedStateFromProps`，`shouldComponentUpdate`,`render`,`getSnapshotBeforeUpdate`,`componentDidUpdate`
+3. 将要卸载。在这个阶段，react 组件将要从 dom 中移除，生命周期有`componentWillUnmount`
+
+前两个阶段，react 在将状态反映成 dom，展示在屏幕的过程中，经历过三个过程：
+
+1. render 阶段。在这个阶段，组件渲染没有任何副作用，在这个阶段，react 可以暂停、终止、重启渲染。
+2. pre-commit 阶段。在组件实际将改变应用到 dom 上之前，在这个时刻，允许 react 从 dom 中读取状态，在`getSnapshotBeforeUpdate`周期可以获取。
+3. commit 阶段。这个阶段 react 就要更新 dom。相应的生命周期会被执行，挂载时是 componentDidMount,更新时是 componentDidUpdate,卸载时是 componentWillUnmount
+
+### 生命周期列表
+
+[react 生命周期图谱](https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/)
+
+## 高阶组件
+
+高阶组件是一个函数，它的入参是一个 react 组件，返回值是一个新组件。这是基于 react 的可组合特性抽象出的模式。
+
+高阶组件的用例通常有：
+
+1. 代码复用，逻辑重用和抽象
+2. 渲染劫持
+3. state 抽象和封装
+4. props 封装
+
+## context
+
+context 提供了新的传递 props 的方式，这种方式无需一层一层的向下传递 props。
+
+```jsx
+const { Provider, Consumer } = React.createContext(defaultValue);
+```
+
+## children prop
+
+children 其实就是一个普通的 prop，只不过它的形式是将组件作为数据传递，而且一个标 jsx 标签的开始和闭合标签中间的内容，都被作为 children props 传递。
+
+关于 children props 的 API 有`React.children.map`、`React.children.forEach`、`React.children.count`、`React.children.only`、`React.children.toArray`
+
+## react.lazy 函数
+
+React.lazy 接受一个函数，这个函数需要动态调用 import()。它必须返回一个 Promise，该 Promise 需要 resolve 一个 default export 的 React 组件。
+
+## createPortal
+
+createPortal(child, container)
+
+创建 portal。Portal 提供了一种将子节点渲染到已 DOM 节点中的方式，该节点存在于 DOM 组件的层次结构之外。
+
+## error boundary 错误边界
+
+### 开发 react 中的错误
+
+开发 react 应用时，在`mode=development`模式下，如果有 js 报错，会发现页面会出现一个报错的显示，如图
+![报错结果](./images/error-overlay.png)
+
+根据提示文字可以找到出错的代码在源码中对应的位置，点击出错行甚至可以直接拉起编辑器并定位到对应出错位置。开发体验满满，那这是如何实现的呢？
+
+首先该效果肯定是在开发模式下出现的，在生产环境下，显然不适合出现这个不友好的界面。要显示报错，肯定是开发环境监听了错误的产生，在 create-react-app 找到开发服务器的配置,在 config/webpackDevServer.config.js 中引入了两个库
+
+```js
+const errorOverlayMiddleware = require('react-dev-utils/errorOverlayMiddleware');
+const evalSourceMapMiddleware = require('react-dev-utils/evalSourceMapMiddleware');
+```
+
+在 server 配置中 use 了两个中间件
+
+```js
+before(app, server) {
+    // Keep `evalSourceMapMiddleware` and `errorOverlayMiddleware`
+    // middlewares before `redirectServedPath` otherwise will not have any effect
+    // This lets us fetch source contents from webpack for the error overlay
+    app.use(evalSourceMapMiddleware(server));
+    // This lets us open files from the runtime error overlay.
+    app.use(errorOverlayMiddleware());
+
+    if (fs.existsSync(paths.proxySetup)) {
+        // This registers user provided middleware for proxy reasons
+        require(paths.proxySetup)(app);
+    }
+},
+```
+
+看字面意思大致可以猜到`evalSourceMapMiddleware`是对应报错在源码中的位置，`errorOverlayMiddleware`可能就是显示的报错 ui。
+
+var ErrorOverlay = require('react-error-overlay');
+深入到`errorOverlayMiddleware`库中发现依赖了`require('react-error-overlay')`,
+
+该库中有监听错误的逻辑和展示报错的 ui 组件，知道该库正是 create-react-app 预置环境展示报错的源码部分。
+
+### 引出 error-boundary
+
+js 会有报错
+||
+react 16 版本之前报错不会崩溃，16 之后会卸载组件树
+||
+卸载后防止白屏，需要展示降级 ui 用户体验
+||
+error-boundary
+||
+一般来说整个应用只需一个包裹，如果不同部分报错后不影响其他部分就使用多个
+
+如上所述开发环境下会有友好的界面方便开发，在生产环境下肯定不会出现。那在生产环境会有什么效果呢？
+
+回顾之前的多页面应用开发过程，当报错时，往往在控制台显示报错的代码和错误堆栈，这种方式其实是有问题的，假定一种情况：
+当点击某一个 dom，修改一个变量的值（例如+1）成功，然后有段逻辑出现了报错，报错的逻辑之后还需要修改一个变量的值（还是+1），用户预想的是两个变量需要同步，因为中间的报错，没有保持两个变量同步，那么后面的操作可能偏差越来越大。
+
+官方举例：”我们对这一决定有过一些争论，但根据我们的经验，把一个错误的 UI 留在那比完全移除它要更糟糕。例如，在类似 Messenger 的产品中，把一个异常的 UI 展示给用户可能会导致用户将信息错发给别人。同样，对于支付类应用而言，显示错误的金额也比不呈现任何内容更糟糕。“
+
+类似情况在 react 中出现之后，因为 react 是由数据驱动 ui 的，数据状态的紊乱，被破坏，那么渲染时必定就会产生错误。在 react 16 版本之前这些未被捕获的错误是不影响整个组件树的，**但是在 16 版本之后，任何未被错误边界捕获的错误将会导致整个 React 组件树被卸载。**
+
+react 认为在渲染已经出错的情况下，最好终止整个渲染过程（防止累积错误？）。
+
+这种错误就是由于之前的状态出错造成的，所以在这些错误出现的早期就处理掉是最好的处理方式。
+
+组件树被卸载后，页面显示一个降级的 ui 是好的体验，error-boundary 提供了此便利。
+
+那么 error-boundary 是什么？
+
+error-boundary 是一个组件，是一个特殊的组件。
+
+如果一个 class 组件中定义了 static getDerivedStateFromError() 或 componentDidCatch() 这两个生命周期方法中的任意一个（或两个）时，那么它就变成一个错误边界。当抛出错误后，请使用 static getDerivedStateFromError() 渲染备用 UI ，使用 componentDidCatch() 打印错误信息。可以看出**目前只有 class 组件才可以成为一个 error-boundary 组件，因为函数组件没有该生命周期**
+
+错误边界可以捕获发生在整个子组件树的渲染期间、生命周期方法以及构造函数中的错误。
+
+以下场景的报错不会被捕获到：
+
+-   事件处理（React 不需要错误边界来捕获事件处理器中的错误。与 render 方法和生命周期方法不同，事件处理器不会在渲染期间触发。因此，如果它们抛出异常，React 仍然能够知道需要在屏幕上显示什么。）
+-   异步代码（例如 setTimeout 或 requestAnimationFrame 回调函数）
+-   服务端渲染
+-   它自身抛出来的错误（并非它的子组件，仅可以捕获其子组件的错误）
+
+```jsx
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError(error) {
+        // 更新 state 使下一次渲染能够显示降级后的 UI
+        return { hasError: true };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        // 你同样可以将错误日志上报给服务器
+        logErrorToMyService(error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            // 你可以自定义降级后的 UI 并渲染
+            return <h1>Something went wrong.</h1>;
+        }
+
+        return this.props.children;
+    }
+}
+```
+
+验证：
+在 react 版本大于 16 的项目中，在非根组件之上包裹 error-boundary 组件，当出现错误后，发现根容器到 error-boundary 之间的层级依然是有 dom 出现的，不包裹 error-boundary，出现错误后整个 root 组件被卸载，出现白屏。
+
+大多数情况下, 你只需要声明一次错误边界组件, 并在整个应用中使用它。
+
+## react-dom 包的用处
+
+主要用`import ReactDOM from 'react-dom' ReactDOM.render(<Component />, node，[callback]),React.unmountComponentAtNode()`,
+
+使用 ReactDOM.render 将 react 组件渲染到指定页面的节点上，也有`React.unmountComponentAtNode`用于卸载某个节点上挂载的 react 节点。render 方法的第三个参数可选，回调参数，当组件被渲染或者被更新时会执行该回调函数。
+
+服务端渲染时用到了`react-dom/server`模块，使用 renderToString 方法写入 html 服务端返回
+
+```js
+// using Express
+import { renderToString } from 'react-dom/server';
+import MyPage from './MyPage';
+
+app.get('/', (req, res) => {
+    res.write('<!DOCTYPE html><html><head><title>My Page</title></head><body>');
+    res.write('<div id="content">');
+    res.write(renderToString(<MyPage />));
+    res.write('</div></body></html>');
+    res.end();
+});
+```
+
+## react 的优缺点
+
+### 优点
+
+### 缺点
