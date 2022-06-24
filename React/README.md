@@ -2,7 +2,7 @@
 
 ## React 是什么
 
-React 是一个开源二点用于构建用户界面的前端 js 库，尤其是单页面应用。
+React 是一个开源的用于构建用户界面的前端 js 库，尤其是单页面应用。
 
 ## React 的主要特征有哪些
 
@@ -58,6 +58,8 @@ state 一般的作用是会影响到渲染的，重新渲染是需要重新生�
 
 首先第二个参数是一个函数对象，并且回调函数，回调在 setState 的操作完成并且页面被正确渲染完成后就会被调用执行。
 
+同样的 this.forceUpdate(callback)第二个参数也是回调函数，应该尽量依靠 this.props 和 this.state 的改变来刷新，避免 forceUpdate
+
 ## html 和 react 的事件绑定区别
 
 -   书写
@@ -89,9 +91,44 @@ key 是一个特殊的 prop，在子组件的 props 中不会接收到这个 key
 
 那么应该传递给 key 什么值呢？
 
-传递给 key 的值应该是稳定的，一对一的，最好不要一个 key 的值可能对应数组的不同元素。所以一般用数组的 id 来表示唯一。
+传递给 key 的值应该是稳定的，一对一的，最好不要一个 key 的值可能对应数组的不同元素。所以一般用数据的 id 来表示唯一。
 
 如果没有稳定的 id，那么会用索引来做。这么做的话，如果这个数组的元素的顺序是可以变动的，那么会有性能问题，这是不推荐的。
+
+分析：
+若使用 index 作为 key，会有性能问题
+假如有三项元素 [7,8,9],对应三个 key 取索引 0 1 2。渲染后的结构为
+
+```jsx
+<ul>
+    <li key={0}>7</li>
+    <li key={1}>8</li>
+    <li key={2}>9</li>
+</ul>
+```
+
+如果删除第一项，那么重新 render 之后，原来的第二项索引为 1，第三项索引为 2，react 机制会认为数组第一项和第二项的内容变化了，所以要重新渲染这两项，而没有了第三项，所以认为是把第三项删除了。这样渲染之后，前三项都有变化，dom 操作影响大。
+
+假如使用内容作为索引，渲染后的结构为
+
+```jsx
+<ul>
+    <li key={7}>7</li>
+    <li key={8}>8</li>
+    <li key={9}>9</li>
+</ul>
+```
+
+此时如果删除第一项，render 之后的结构为
+
+```jsx
+<ul>
+    <li key={8}>8</li>
+    <li key={9}>9</li>
+</ul>
+```
+
+因为后两项的 key 保持不变，渲染时，react 认为后两项没改动，只将第一项从 dom 移除即可了，dom 操作相对要少。
 
 note：如果循环渲染的元素是一个封装的组件，那就把 key 属性赋值在组件的 props 上，而不是在组件内部；如果一个列表元素没有 key 属性，react 会发出一个警告
 
@@ -165,7 +202,7 @@ React.cloneElement(
 首先是 react 组件的三个不同阶段：
 
 1. 挂载中。组件的数据状态将反应到 dom 上。与这个阶段有关系的生命周期有`constructor`,`getDerivedStateFromProps`,`render`,`componentDidMount`
-2. 更新中。有两种方式可以将组件状态转化为更新中。props 改变和 state 改变（setState 和 forceUpdate）。与这个阶段有关系的生命周期有`getDerivedStateFromProps`，`shouldComponentUpdate`,`render`,`getSnapshotBeforeUpdate`,`componentDidUpdate`
+2. 更新中。有两种方式可以将组件状态转化为更新中。props 改变和 state 改变（setState 和 forceUpdate,forceUpdate 将跳过 shouldComponentUpdate）。与这个阶段有关系的生命周期有`getDerivedStateFromProps`，`shouldComponentUpdate`,`render`,`getSnapshotBeforeUpdate`,`componentDidUpdate`
 3. 将要卸载。在这个阶段，react 组件将要从 dom 中移除，生命周期有`componentWillUnmount`
 
 前两个阶段，react 在将状态反映成 dom，展示在屏幕的过程中，经历过三个过程：
@@ -193,9 +230,55 @@ React.cloneElement(
 
 context 提供了新的传递 props 的方式，这种方式无需一层一层的向下传递 props。
 
+### API
+
+-   React.createContext(defaultValue)
+
+该 api 返回一个对象`Context = {Provider,Consumer}`,可用于包裹子组件。defaultValue 生效时机是只有当使用到该 context 的子组件在祖先上没有找到该 context 的 Provider 包裹时，才会使用该 defaultValue,_并不是 Provider 的 value 传递 undefined 时会用_。
+
+-   Context.Provider
+    包裹子组件，传递 value
+
 ```jsx
-const { Provider, Consumer } = React.createContext(defaultValue);
+<Context.Provider value={value}></Context.Provider>
 ```
+
+-   Context.Consumer
+
+子组件的渲染依赖该 context 的值时，可以使用，这种方法需要一个函数作为子元素，这函数接受当前 context 的值，返回一个 react 元素，如下
+
+```jsx
+<Context.Consumer>
+    (value) => <div></div>
+</Context.Consumer>
+```
+
+-   class.contextType
+
+挂载在 class 上的 contextType 属性可以赋值为由 React.createContext 创建的 context 对象。此属性可以让你使用 this.context 来获取最近 context 上的值，可以在任何生命周期上使用，包括 render
+
+```jsx
+class MyClass extends React.Component {
+    render() {
+        let value = this.context;
+    }
+}
+MyClass.contextType = MyContext;
+```
+
+-   useContext
+
+hook 中的 context 的使用。使用此 hook 可以获取到 context 的值，并且更新时，函数组件也刷新。
+
+```js
+const value = useContext(MyContext);
+```
+
+接收一个 context 对象（React.createContext 的返回值）并返回该 context 的当前值。当前的 context 值由上层组件中距离当前组件最近的 <MyContext.Provider> 的 value prop 决定。
+
+当组件上层最近的 <MyContext.Provider> 更新时，该 Hook 会触发重渲染，并使用最新传递给 MyContext provider 的 context value 值。即使祖先使用 React.memo 或 shouldComponentUpdate，也会在组件本身使用 useContext 时重新渲染。
+
+useContext(MyContext) 只是让你能够读取 context 的值以及订阅 context 的变化。你仍然需要在上层组件树中使用 <MyContext.Provider> 来为下层组件提供 context。
 
 ## children prop
 
@@ -351,8 +434,29 @@ app.get('/', (req, res) => {
 });
 ```
 
+## 设置 html 内容的方法
+
+**dangerouslySetInnerHTML**
+
+dangerouslySetInnerHTML 是 React 为浏览器 DOM 提供 innerHTML 的替换方案。通常来讲，使用代码直接设置 HTML 存在风险，因为很容易无意中使用户暴露于跨站脚本（XSS）的攻击。因此，你可以直接在 React 中设置 HTML，但当你想设置 dangerouslySetInnerHTML 时，需要向其传递包含 key 为 \_\_html 的对象，以此来警示你。例如：
+
+## 严格模式
+
+StrictMode 是一个用来突出显示应用程序中潜在问题的工具。在 strictMode 中包裹的子组件中出现的潜在问题，react 都会提示。一般的潜在问题有：
+
+-   不安全的生命周期（过时的、react 新版本不推荐的。）
+-   过时的字符串的 ref API
+-   findDOMNode 方法已过时
+-   [检测意外的副作用](https://zh-hans.reactjs.org/docs/strict-mode.html#detecting-unexpected-side-effects)
+-   过时的 context API
+-   确保可复用的状态
+
 ## react 的优缺点
 
 ### 优点
 
 ### 缺点
+
+## react 的数据流
+
+react 的哲学是数据不可变并且自顶向下。这意味着 props 只能是由父传给子，并且子不能修改接收到的 props
