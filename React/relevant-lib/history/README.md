@@ -6,7 +6,7 @@ Manage session history with JavaScript
 
 ## 相关链接
 
--   [history](https://github.com/remix-run/history)
+- [history](https://github.com/remix-run/history)
 
 ## 前置知识：
 
@@ -18,11 +18,12 @@ const url = `http://baidu.com?query=123#name`;
 // 分析url的各部分组成后,其实就是浏览器全局对象中的location对象的部分属性
 
 window.location = {
-    pathname: 'baidu.com',
-    search: '?query=123',
-    hash: '#name',
-    // 还有其他属性
-    // ...
+  origin: "https://baidu.com",
+  pathname: "/",
+  search: "?query=123",
+  hash: "#name",
+  // 还有其他属性
+  // ...
 };
 ```
 
@@ -34,12 +35,12 @@ history.replaceState(state, title[, url])
 window.addEventListener('popstate', function() {});
 ```
 
--   state 状态对象是一个 JavaScript 对象，它与 pushState()创建的新历史记录条目相关联。 每当用户导航到新状态时，都会触发 popstate (en-US)事件，并且该事件的状态属性包含历史记录条目的状态对象的副本。
+- state 状态对象是一个 JavaScript 对象，它与 pushState()创建的新历史记录条目相关联。 每当用户导航到新状态时，都会触发 popstate (en-US)事件，并且该事件的状态属性包含历史记录条目的状态对象的副本。
 
--   title
-    当前大多数浏览器都忽略此参数，尽管将来可能会使用它。 在此处传递空字符串应该可以防止将来对方法的更改。 或者，您可以为要移动的状态传递简短的标题。
+- title
+  当前大多数浏览器都忽略此参数，尽管将来可能会使用它。 在此处传递空字符串应该可以防止将来对方法的更改。 或者，您可以为要移动的状态传递简短的标题。
 
--   url 新历史记录条目的 URL 由此参数指定。 请注意，浏览器不会在调用 pushState() 之后尝试加载此 URL，但可能会稍后尝试加载 URL，例如在用户重新启动浏览器之后。 新的 URL 不必是绝对的。 如果是相对的，则相对于当前 URL 进行解析。 新网址必须与当前网址相同 origin； 否则，pushState()将引发异常。 如果未指定此参数，则将其设置为文档的当前 URL。
+- url 新历史记录条目的 URL 由此参数指定。 请注意，浏览器不会在调用 pushState() 之后尝试加载此 URL，但可能会稍后尝试加载 URL，例如在用户重新启动浏览器之后。 新的 URL 不必是绝对的。 如果是相对的，则相对于当前 URL 进行解析。 新网址必须与当前网址相同 origin； 否则，pushState()将引发异常。 如果未指定此参数，则将其设置为文档的当前 URL。
 
 ## 源码分析（先以 createBrowserHistory 为例）
 

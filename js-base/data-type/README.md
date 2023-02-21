@@ -57,17 +57,21 @@ Object.prototype.toString 的结果有：
 var class2type = {};
 
 // 生成class2type映射
-'Boolean Number String Function Array Date RegExp Object Error'.split(' ').map(function (item, index) {
-    class2type['[object ' + item + ']'] = item.toLowerCase();
-});
+"Boolean Number String Function Array Date RegExp Object Error"
+  .split(" ")
+  .map(function (item, index) {
+    class2type["[object " + item + "]"] = item.toLowerCase();
+  });
 
 function type(obj) {
-    // 一箭双雕（类型判断时，一边是null时，另一边只有是undefined或null时才会为true）
-    if (obj == null) {
-        return obj + '';
-    }
-    // 上方列表中没有包含ES6中的Map、Set、Symbol，所以有了||'object'
-    return typeof obj === 'object' || typeof obj === 'function' ? class2type[Object.prototype.toString.call(obj)] || 'object' : typeof obj;
+  // 一箭双雕（类型判断时，一边是null时，另一边只有是undefined或null时才会为true）
+  if (obj == null) {
+    return obj + "";
+  }
+  // 上方列表中没有包含ES6中的Map、Set、Symbol，所以有了||'object'
+  return typeof obj === "object" || typeof obj === "function"
+    ? class2type[Object.prototype.toString.call(obj)] || "object"
+    : typeof obj;
 }
 ```
 
@@ -87,50 +91,53 @@ var toString = class2type.toString;
 var hasOwn = class2type.hasOwnProperty;
 
 function isPlainObject(obj) {
-    var proto, Ctor;
+  var proto, Ctor;
 
-    // 排除掉明显不是obj的以及一些宿主对象如Window
-    if (!obj || toString.call(obj) !== '[object Object]') {
-        return false;
-    }
+  // 排除掉明显不是obj的以及一些宿主对象如Window
+  if (!obj || toString.call(obj) !== "[object Object]") {
+    return false;
+  }
 
-    /**
-     * getPrototypeOf es5 方法，获取 obj 的原型
-     * 以 new Object 创建的对象为例的话
-     * obj.__proto__ === Object.prototype
-     */
-    proto = Object.getPrototypeOf(obj);
+  /**
+   * getPrototypeOf es5 方法，获取 obj 的原型
+   * 以 new Object 创建的对象为例的话
+   * obj.__proto__ === Object.prototype
+   */
+  proto = Object.getPrototypeOf(obj);
 
-    // 没有原型的对象是纯粹的，Object.create(null) 就在这里返回 true
-    if (!proto) {
-        return true;
-    }
+  // 没有原型的对象是纯粹的，Object.create(null) 就在这里返回 true
+  if (!proto) {
+    return true;
+  }
 
-    /**
-     * 以下判断通过 new Object 方式创建的对象
-     * 判断 proto 是否有 constructor 属性，如果有就让 Ctor 的值为 proto.constructor
-     * 如果是 Object 函数创建的对象，Ctor 在这里就等于 Object 构造函数
-     */
-    Ctor = hasOwn.call(proto, 'constructor') && proto.constructor;
+  /**
+   * 以下判断通过 new Object 方式创建的对象
+   * 判断 proto 是否有 constructor 属性，如果有就让 Ctor 的值为 proto.constructor
+   * 如果是 Object 函数创建的对象，Ctor 在这里就等于 Object 构造函数
+   */
+  Ctor = hasOwn.call(proto, "constructor") && proto.constructor;
 
-    // 在这里判断 Ctor 构造函数是不是 Object 构造函数，用于区分自定义构造函数和 Object 构造函数
-    return typeof Ctor === 'function' && hasOwn.toString.call(Ctor) === hasOwn.toString.call(Object);
+  // 在这里判断 Ctor 构造函数是不是 Object 构造函数，用于区分自定义构造函数和 Object 构造函数
+  return (
+    typeof Ctor === "function" &&
+    hasOwn.toString.call(Ctor) === hasOwn.toString.call(Object)
+  );
 
-    // 这里注意：函数的 toString 方法会返回一个表示函数源代码的字符串。具体来说，包括 function关键字，形参列表，大括号，以及函数体中的内容。
+  // 这里注意：函数的 toString 方法会返回一个表示函数源代码的字符串。具体来说，包括 function关键字，形参列表，大括号，以及函数体中的内容。
 }
 ```
 
 ```js
 // redux实现的版本：核心思想是通过{}或new Object创建的对象的原型对象的原型对象是null。
 function isPlainObject(obj: any): boolean {
-    if (typeof obj !== 'object' || obj === null) return false;
+  if (typeof obj !== "object" || obj === null) return false;
 
-    let proto = obj;
-    while (Object.getPrototypeOf(proto) !== null) {
-        proto = Object.getPrototypeOf(proto);
-    }
+  let proto = obj;
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto);
+  }
 
-    return Object.getPrototypeOf(obj) === proto;
+  return Object.getPrototypeOf(obj) === proto;
 }
 ```
 
@@ -329,16 +336,17 @@ ToPrimitive(input[, PreferredType])
 
 当用==比较当个类型不一样的值的时候，就会发生类型转换。
 
-先看两遍类型一样时的情况：
+先看两边类型一样时的情况：
 
 1. x 是 Undefined，返回 true
 2. x 是 Null，返回 true
 3. x 是数字：
-    1. x 是 NaN，返回 false
-    1. y 是 NaN，返回 false
-    1. x 与 y 相等，返回 true
-    1. x 是+0，y 是-0，返回 true
-    1. x 是-0，y 是+0，返回 true 6.返回 false
+   1. x 是 NaN，返回 false
+   2. y 是 NaN，返回 false
+   3. x 与 y 相等，返回 true
+   4. x 是+0，y 是-0，返回 true
+   5. x 是-0，y 是+0，返回 true 6
+   6. 返回 false
 4. x 是字符串，完全相等返回 true,否则返回 false
 5. x 是布尔值，x 和 y 都是 true 或者 false，返回 true，否则返回 false
 6. x 和 y 指向同一个对象，返回 true，否则返回 false
@@ -363,5 +371,5 @@ ToPrimitive(input[, PreferredType])
 
 特殊的:
 
--   "" == [null] == [undefined]
--   Number("\r") == Number("\t") == Number("\n")
+- "" == [null] == [undefined]
+- Number("\r") == Number("\t") == Number("\n")
