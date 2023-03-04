@@ -4,9 +4,9 @@ js 编译器。主要用来将 ES6+代码转换为向后兼容的代码，以适
 
 它主要做几件事
 
--   转换语法
--   模拟代码中用到的新语法但是目标环境中并没有该功能的写法
--   源码转换??
+- 转换语法
+- 模拟代码中用到的新语法但是目标环境中并没有该功能的写法
+- 源码转换??
 
 在 7 版本之后，所有 babel 相关的包都以 npm 包的形式发布在@babel 命名空间下
 
@@ -34,10 +34,10 @@ js 编译器。主要用来将 ES6+代码转换为向后兼容的代码，以适
 
 babel 也支持`cosmiconfig`支持的配置方式
 
--   package.json babel key
--   babelrc
--   babelrc.json/yaml/yml/js/cjs
--   babel.config.js/json
+- package.json babel key
+- babelrc
+- babelrc.json/yaml/yml/js/cjs
+- babel.config.js/json
 
 ## 配置项
 
@@ -73,9 +73,9 @@ Type: []
 
 ```json
 {
-    "parserOpts": {
-        "plugins": ["jsx"]
-    }
+  "parserOpts": {
+    "plugins": ["jsx"]
+  }
 }
 ```
 
@@ -83,8 +83,8 @@ Type: []
 
 ```json
 {
-    "plugins": ["transform-decorators-legacy", "transform-class-properties"],
-    "presets": ["@babel/preset-env", "@babel/preset-react"]
+  "plugins": ["transform-decorators-legacy", "transform-class-properties"],
+  "presets": ["@babel/preset-env", "@babel/preset-react"]
 }
 ```
 
@@ -105,11 +105,11 @@ class Circle {}
 
 ```js
 function _classCallCheck(instance, Constructor) {
-    //...
+  //...
 }
 
 var Circle = function Circle() {
-    _classCallCheck(this, Circle);
+  _classCallCheck(this, Circle);
 };
 ```
 
@@ -123,7 +123,7 @@ var Circle = function Circle() {
 
 ```json
 {
-    "targets": "> 0.25%, not dead"
+  "targets": "> 0.25%, not dead"
 }
 ```
 
@@ -131,9 +131,11 @@ var Circle = function Circle() {
 
 ```json
 {
-    "chrome": "58",
-    "ie": "11"
+  "chrome": "58",
+  "ie": "11"
 }
 ```
 
 如果不传设置 targets 属性，babel 默认是最旧的浏览器，将把所有的 es6 的代码转换为 es5 兼容的。
+
+babel-plugin-import

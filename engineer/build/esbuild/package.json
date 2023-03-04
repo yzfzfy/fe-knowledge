@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild app.jsx --bundle --outfile=out.js"
+    "build": "node build-script.js"
   },
   "keywords": [],
   "author": "",
