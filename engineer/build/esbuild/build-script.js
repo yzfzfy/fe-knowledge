@@ -5,7 +5,7 @@ let result = esbuild.buildSync({
   entryPoints: ["app.ts"],
   sourcemap: "external",
   //   write: false,
-  outdir: "out",
+  outdir: "dist",
 });
 console.log(result);
 

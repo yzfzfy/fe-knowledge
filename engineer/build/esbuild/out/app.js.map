@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../app.ts"],
-  "sourcesContent": ["import { b } from \"./a\";\r\nlet a: number = 12345;\r\nconsole.log(a);\r\nconsole.log(b);\r\n"],
-  "mappings": "AAAA,SAAS,SAAS;AAClB,IAAI,IAAY;AAChB,QAAQ,IAAI,CAAC;AACb,QAAQ,IAAI,CAAC;",
-  "names": []
-}
