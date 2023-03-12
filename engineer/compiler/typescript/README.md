@@ -1,3 +1,3 @@
 # TypeScript
 
-TS 语法编译器。
+为 javascript 附加静态类型的超集。

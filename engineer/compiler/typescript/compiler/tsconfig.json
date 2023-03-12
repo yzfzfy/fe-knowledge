@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "esnext",
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./lib",
+    "declaration": true,
+    "declarationDir": "./lib/types",
+    "emitDeclarationOnly": false,
+    "removeComments": true,
+    "noEmit": false
+  },
+  "include": ["**/*"]
+}
