@@ -76,6 +76,10 @@ console.log(b);
 - External 传入数组，忽略不想要打入包中的引用。可以是一个 npm 包、一种文件类型、一个目录下的所有文件
 - resolve-extensions。当以 require('./file')格式引入文件时，指定应该以何种文件格式解析此文件。默认的‘.tsx,.ts,.jsx,.js,.css,.json’
 
+### format
+
+`iife`,`cjs`,`esm`
+
 ### 转化
 
 - jsx 关于如何处理 jsx 的设置。三个值：transform、preserve、automatic

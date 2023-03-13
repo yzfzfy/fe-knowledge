@@ -47,7 +47,7 @@ Type: []
 
 常用的几个 presets:`@babel/preset-env`、`@babel/preset-typescript`、`@babel/preset-react`、`@babel/preset-flow`。可以使用任何存在于 npm 上的 presets 包。namespace 是 babel-preset 或@babel/preset
 
-presets 数组的优先级顺序是从后往前。
+presets 数组的作用顺序是从后往前。
 每个 preset 都支持传入该 preset 的配置选项。配置选项是一个对象，也就是下列三种是等价的。
 
 ```js
@@ -138,4 +138,10 @@ var Circle = function Circle() {
 
 如果不传设置 targets 属性，babel 默认是最旧的浏览器，将把所有的 es6 的代码转换为 es5 兼容的。
 
-babel-plugin-import
+## 常见的插件
+
+### babel-plugin-import
+
+早期（没有 tree shaking 的时代）为了实现按需引入功能，我们会通过 babel-plugin-import 来优化我们的项目打包体积，做到只打包我们项目中所用到的模块。
+但在现在新版的 antd 和 material-ui 中，默认已支持基于 ES modules 的 tree shaking 功能；而打包工具如：Webpack、Rollup 等在打包层面也支持了 tree shaking，使得我们不需要额外配置 babel-plugin-import 也能实现按需引入，这得益于 tree shaking。
+虽然现代框架技术都已支持 tree shaking，但总归在一些老的项目所用到的老技术是无法支持 tree shaking 的，这就需要本文的主角 babel-plugin-import 来完成这件事情。
