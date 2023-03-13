@@ -17,7 +17,10 @@
 - [发包流程] 代码修改完成后，执行 npm version [patch|minor|major]，这里就是自动修改 package.json 中的版本号，也可以手动修改,然后执行 npm login 登录在当前 registry 下的账户，然后执行 npm publish 即可。
 - [npm view <package—name>] 查看包的信息。
 - [npm whoami] 显示当前登录的用户信息 npm logout 退出登录
-- [npx]
+- [npx] npx 是 npm5.2.0 版本新增的一个工具包，定义为 npm 包的执行者，相比 npm，npx 会自动安装依赖包并执行某个命令。npx 会在当前目录下的./node_modules/.bin 里去查找是否有可执行的命令，没有找到的话再从全局里查找是否有安装对应的模块，全局也没有的话就会自动下载对应的模块，如 create-react-app，npx 会将 create-react-app 下载到一个临时目录，用完即删，不会占用本地资源。
+
+- [npm publish] 自己开发一个包需要发布到 npm 中，公网开发者可以下载包。npm login 输入账号密码后，一般在 npm 的 prepublish 生命周期执行 build 命令后发布包。
+- [npm ls] 罗列出依赖的包。加--depth 参数表示层级 0 开始。-g 表示罗列全局的包。比如`npm ls -g --depth 0`逻辑出全局安装的包，只展示一级。
 
 ```
 +--project
