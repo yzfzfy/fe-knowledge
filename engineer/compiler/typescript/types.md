@@ -3,21 +3,21 @@
 There are some additional types you’ll want to recognize that appear often when working with function types. Like all types, you can use them everywhere, but these are especially relevant in the context of functions.
 有一些在为函数注解时经常会用到的类型，虽然他们可以在任何地方使用这些类型，但这在函数使用中尤其常见。
 
--   void
+- void
 
 表示一个函数并不会返回任何值，当函数并没有任何返回值，或者返回不了明确的值的时候，就应该用这种类型。js 中如果一个函数没有返回值，那他隐含的会返回一个 undefined。但是在 ts 中 void 和 undefined 是不一样的。
 
--   object
+- object
 
 在 ts 中 object 表示一个类型非原始类型(null undefined number string boolean symbol bigint)。也不同于和空对现象{}和 Object。Object 一般不会用到。比如在 ts 中，函数也是 object 类型。
 
--   never
+- never
 
 一些函数从来不返回值：
 
 ```js
 function fail(msg: string): never {
-    throw new Error(msg);
+  throw new Error(msg);
 }
 ```
 
@@ -29,29 +29,29 @@ never 类型表示一个值不会再被观察到 (observed)。
 
 ```js
 function fn(x: string | number) {
-    if (typeof x === 'string') {
-        // do something
-    } else if (typeof x === 'number') {
-        // do something else
-    } else {
-        x; // has type 'never'!
-    }
+  if (typeof x === "string") {
+    // do something
+  } else if (typeof x === "number") {
+    // do something else
+  } else {
+    x; // has type 'never'!
+  }
 }
 ```
 
 [关于 never 类型的解释和使用](https://www.fullstackbb.com/typescript/never-type-in-typescript/)
 
--   unknown
+- unknown
 
 unknown 类型可以表示任何值。有点类似于 any，但是更安全，因为对 unknown 类型的值做任何事情都是不合法的。可以用来描述一个可以接收任何值，但是在函数体中没有用到这个值的函数。
 
 ```ts
 function safeParse(s: string): unknown {
-    return JSON.parse(s);
+  return JSON.parse(s);
 }
 ```
 
--   函数重载
+- 函数重载
 
 一个函数在调用时可以传入不同数量和类型的参数。例如一个函数返回 Date 对象，但是参数可能传入时间戳或者年月日的格式。此时就可以使用函数重载。说明一个函数的不同调用方法，需要写一些函数签名（两个或者更多）再写函数具体实现内容。
 
@@ -59,11 +59,11 @@ function safeParse(s: string): unknown {
 function makeDate(timestamp: number): Date;
 function makeDate(m: number, d: number, y: number): Date;
 function makeDate(mOrTimestamp: number, d?: number, y?: number): Date {
-    if (d !== undefined && y !== undefined) {
-        return new Date(y, mOrTimestamp, d);
-    } else {
-        return new Date(mOrTimestamp);
-    }
+  if (d !== undefined && y !== undefined) {
+    return new Date(y, mOrTimestamp, d);
+  } else {
+    return new Date(mOrTimestamp);
+  }
 }
 const d1 = makeDate(12345678);
 const d2 = makeDate(5, 5, 5);
@@ -93,7 +93,7 @@ function fn(x: boolean) {}
 function fn(x: string): string;
 // Return type isn't right
 function fn(x: number): boolean;
-This overload signature is not compatible with its implementation signature.
+// This overload signature is not compatible with its implementation signature.
 function fn(x: string | number) {
   return "oops";
 }
@@ -103,22 +103,22 @@ function fn(x: string | number) {
 function len(s: string): number;
 function len(arr: any[]): number;
 function len(x: any) {
-    return x.length;
+  return x.length;
 }
 
-len(''); // OK
+len(""); // OK
 len([0]); // OK
-len(Math.random() > 0.5 ? 'hello' : [0]); // 报错  原因：TypeScript 只能一次用一个函数重载处理一次函数调用。自己理解：ts做静态类型检查，不会认为?:是一个确定的值而是一个联合类型 'hello' | number[].
+len(Math.random() > 0.5 ? "hello" : [0]); // 报错  原因：TypeScript 只能一次用一个函数重载处理一次函数调用。自己理解：ts做静态类型检查，不会认为?:是一个确定的值而是一个联合类型 'hello' | number[].
 // 此时可以不使用函数重载而让函数的参数使用联合类型定义。
 ```
 
--   索引签名
+- 索引签名
 
 有的时候，你不能提前知道一个类型里的所有属性的名字，但是你知道这些值的特征。
 一个索引签名的属性类型必须是 string 或者是 number。
 虽然 TypeScript 可以同时支持 string 和 number 类型，但数字索引的返回类型一定要是字符索引返回类型的子类型。
 
--   属性继承
+- 属性继承
 
 ```ts
 interface BasicAddress {
@@ -163,10 +163,10 @@ const cc: ColorfulCircle = {
 };
 ```
 
--   交叉类型
-    交叉类型（Intersection types）用于合并已经存在的对象类型。
+- 交叉类型
+  交叉类型（Intersection types）用于合并已经存在的对象类型。
 
--   接口继承和交叉类型的区别
+- 接口继承和交叉类型的区别
 
 看起来很相似，最大的不同在于冲突怎么处理，你决定选择那种方式的主要原因。
 
@@ -196,28 +196,28 @@ type ColorfulSub = Colorful & {
 此时的color的类型时never，取得是 string 和 number 的交集。
 ```
 
--   泛型(Generic)
+- 泛型(Generic)
 
 常见的 Array<string>，其实是使用泛型的表示法。说明 Array 本身是一个泛型
 
 ```ts
 interface Array<Type> {
-    /**
-     * Gets or sets the length of the array.
-     */
-    length: number;
+  /**
+   * Gets or sets the length of the array.
+   */
+  length: number;
 
-    /**
-     * Removes the last element from an array and returns it.
-     */
-    pop(): Type | undefined;
+  /**
+   * Removes the last element from an array and returns it.
+   */
+  pop(): Type | undefined;
 
-    /**
-     * Appends new elements to an array, and returns the new length of the array.
-     */
-    push(...items: Type[]): number;
+  /**
+   * Appends new elements to an array, and returns the new length of the array.
+   */
+  push(...items: Type[]): number;
 
-    // ...
+  // ...
 }
 ```
 
@@ -227,7 +227,7 @@ interface Array<Type> {
 
 ```ts
 function identity<Type>(arg: Type): Type {
-    return arg;
+  return arg;
 }
 ```
 
@@ -239,14 +239,14 @@ function identity<Type>(arg: Type): Type {
 
 ```ts
 class GenericNumber<NumType> {
-    zeroValue: NumType;
-    add: (x: NumType, y: NumType) => NumType;
+  zeroValue: NumType;
+  add: (x: NumType, y: NumType) => NumType;
 }
 
 let myGenericNumber = new GenericNumber<number>();
 myGenericNumber.zeroValue = 0;
 myGenericNumber.add = function (x, y) {
-    return x + y;
+  return x + y;
 };
 ```
 
@@ -258,18 +258,18 @@ myGenericNumber.add = function (x, y) {
 
 ```ts
 function getProperty<Type, Key extends keyof Type>(obj: Type, key: Key) {
-    return obj[key];
+  return obj[key];
 }
 
 let x = { a: 1, b: 2, c: 3, d: 4 };
 
-getProperty(x, 'a');
-getProperty(x, 'm');
+getProperty(x, "a");
+getProperty(x, "m");
 
 // Argument of type '"m"' is not assignable to parameter of type '"a" | "b" | "c" | "d"'.
 ```
 
--   元组
+- 元组
 
 元组类型是另外一种 Array 类型，当你明确知道数组包含多少个元素，并且每个位置元素的类型都明确知道的时候，就适合使用元组类型。
 
@@ -289,7 +289,7 @@ function doSomething(pair: readonly [string, number]) {
 
 let point = [3, 4] as const;
 
--   keyof 类型操作符
+- keyof 类型操作符
 
 对一个**对象类型**使用 keyof 操作符，会返回该对象属性名组成的一个字符串或者数字字面量的联合。这个例子中的类型 P 就等同于 "x" | "y"：
 
@@ -301,15 +301,15 @@ type P = keyof Point;
 // 注意这里的Point是一个类型，keyof作用在类型上
 ```
 
--   数字字面量联合类型
+- 数字字面量联合类型
 
 keyof 也可能返回一个数字字面量的联合类型，
 
 ```ts
 const NumericObject = {
-    [1]: '冴羽一号',
-    [2]: '冴羽二号',
-    [3]: '冴羽三号',
+  [1]: "冴羽一号",
+  [2]: "冴羽二号",
+  [3]: "冴羽三号",
 };
 
 type result = keyof typeof NumericObject;
@@ -324,7 +324,7 @@ type result = keyof typeof NumericObject;
 // type result = 1 | 2 | 3
 ```
 
--   Symbol
+- Symbol
 
 TypeScript 也可以支持 symbol 类型的属性名：
 
@@ -334,9 +334,9 @@ const sym2 = Symbol();
 const sym3 = Symbol();
 
 const symbolToNumberMap = {
-    [sym1]: 1,
-    [sym2]: 2,
-    [sym3]: 3,
+  [sym1]: 1,
+  [sym2]: 2,
+  [sym3]: 3,
 };
 
 type KS = keyof typeof symbolToNumberMap; // typeof sym1 | typeof sym2 | typeof sym3
@@ -346,8 +346,8 @@ type KS = keyof typeof symbolToNumberMap; // typeof sym1 | typeof sym2 | typeof 
 
 ```ts
 function useKey<T, K extends keyof T>(o: T, k: K) {
-    var name: string = k;
-    // Type 'string | number | symbol' is not assignable to type 'string'.
+  var name: string = k;
+  // Type 'string | number | symbol' is not assignable to type 'string'.
 }
 ```
 
@@ -355,7 +355,7 @@ function useKey<T, K extends keyof T>(o: T, k: K) {
 
 ```ts
 function useKey<T, K extends Extract<keyof T, string>>(o: T, k: K) {
-    var name: string = k; // OK
+  var name: string = k; // OK
 }
 ```
 
@@ -363,11 +363,11 @@ function useKey<T, K extends Extract<keyof T, string>>(o: T, k: K) {
 
 ```ts
 function useKey<T, K extends keyof T>(o: T, k: K) {
-    var name: string | number | symbol = k;
+  var name: string | number | symbol = k;
 }
 ```
 
--   typeof 类型操作符
+- typeof 类型操作符
 
 如果仅仅用来判断基本的类型，自然是没什么太大用，和其他的类型操作符搭配使用才能发挥它的作用。
 
@@ -381,7 +381,7 @@ type K = ReturnType<Predicate>;
 
 ```ts
 function f() {
-    return { x: 10, y: 3 };
+  return { x: 10, y: 3 };
 }
 type P = ReturnType<f>;
 
@@ -392,7 +392,7 @@ type P = ReturnType<f>;
 
 ```ts
 function f() {
-    return { x: 10, y: 3 };
+  return { x: 10, y: 3 };
 }
 type P = ReturnType<typeof f>;
 
@@ -413,13 +413,13 @@ let shouldContinue: typeof msgbox("Are you sure you want to continue?");
 我们本意是想获取 msgbox("Are you sure you want to continue?") 的返回值的类型，所以直接使用了 typeof msgbox("Are you sure you want to continue?")，看似能正常执行，但实际并不会，这是因为 typeof 只能对标识符和属性使用。而正确的写法应该是：
 
 ```ts
-ReturnType<typeof msgbox>
+ReturnType<typeof msgbox>;
 ```
 
 对对象使用 typeof
 
 ```ts
-const person = { name: 'kevin', age: '18' };
+const person = { name: "kevin", age: "18" };
 type Kevin = typeof person;
 
 // type Kevin = {
@@ -432,7 +432,7 @@ type Kevin = typeof person;
 
 ```ts
 function identity<Type>(arg: Type): Type {
-    return arg;
+  return arg;
 }
 
 type result = typeof identity;
@@ -445,8 +445,8 @@ type result = typeof identity;
 
 ```ts
 enum UserResponse {
-    No = 0,
-    Yes = 1,
+  No = 0,
+  Yes = 1,
 }
 ```
 
@@ -455,8 +455,8 @@ enum UserResponse {
 ```ts
 var UserResponse;
 (function (UserResponse) {
-    UserResponse[(UserResponse['No'] = 0)] = 'No';
-    UserResponse[(UserResponse['Yes'] = 1)] = 'Yes';
+  UserResponse[(UserResponse["No"] = 0)] = "No";
+  UserResponse[(UserResponse["Yes"] = 1)] = "Yes";
 })(UserResponse || (UserResponse = {}));
 ```
 
@@ -499,25 +499,25 @@ type result = keyof typeof UserResponse;
 // type result = "No" | "Yes"
 ```
 
--   索引访问类型
-    我们可以使用 索引访问类型（indexed access type） 查找另外一个类型上的特定属性：
+- 索引访问类型
+  我们可以使用 索引访问类型（indexed access type） 查找另外一个类型上的特定属性：
 
 ```ts
 type Person = { age: number; name: string; alive: boolean };
-type Age = Person['age'];
+type Age = Person["age"];
 // type Age = number
 ```
 
 因为索引名本身就是一个类型，所以我们也可以使用联合、keyof 或者其他类型：
 
 ```ts
-type I1 = Person['age' | 'name'];
+type I1 = Person["age" | "name"];
 // type I1 = string | number
 
 type I2 = Person[keyof Person];
 // type I2 = string | number | boolean
 
-type AliveOrName = 'alive' | 'name';
+type AliveOrName = "alive" | "name";
 type I3 = Person[AliveOrName];
 // type I3 = string | boolean
 ```
@@ -525,14 +525,14 @@ type I3 = Person[AliveOrName];
 如果你尝试查找一个不存在的属性，TypeScript 会报错：
 
 ```ts
-type I1 = Person['alve'];
+type I1 = Person["alve"];
 // Property 'alve' does not exist on type 'Person'.
 ```
 
 作为索引的只能是类型，这意味着你不能使用 const 创建一个变量引用：
 
 ```ts
-const key = 'age';
+const key = "age";
 type Age = Person[key];
 
 // Type 'key' cannot be used as an index type.
@@ -542,57 +542,57 @@ type Age = Person[key];
 然而你可以使用类型别名实现类似的重构：
 
 ```ts
-type key = 'age';
+type key = "age";
 type Age = Person[key];
 ```
 
 一个页面要用在不同的 APP 里，比如淘宝、天猫、支付宝，根据所在 APP 的不同，调用的底层 API 会不同，我们可能会这样写：
 
 ```ts
-const APP = ['TaoBao', 'Tmall', 'Alipay'];
+const APP = ["TaoBao", "Tmall", "Alipay"];
 
 function getPhoto(app: string) {
-    // ...
+  // ...
 }
 
-getPhoto('TaoBao'); // ok
-getPhoto('whatever'); // ok
+getPhoto("TaoBao"); // ok
+getPhoto("whatever"); // ok
 ```
 
 如果我们仅仅是对 app 约束为 string 类型，即使传入其他的字符串，也不会导致报错，我们可以使用字面量联合类型约束一下：
 
 ```ts
-const APP = ['TaoBao', 'Tmall', 'Alipay'];
-type app = 'TaoBao' | 'Tmall' | 'Alipay';
+const APP = ["TaoBao", "Tmall", "Alipay"];
+type app = "TaoBao" | "Tmall" | "Alipay";
 
 function getPhoto(app: app) {
-    // ...
+  // ...
 }
 
-getPhoto('TaoBao'); // ok
-getPhoto('whatever'); // not ok
+getPhoto("TaoBao"); // ok
+getPhoto("whatever"); // not ok
 ```
 
 但写两遍又有些冗余，我们怎么根据一个数组获取它的所有值的字符串联合类型呢？我们就可以结合上一篇的 typeof 和本节的内容实现：
 
 ```ts
-const APP = ['TaoBao', 'Tmall', 'Alipay'] as const;
+const APP = ["TaoBao", "Tmall", "Alipay"] as const;
 type app = typeof APP[number];
 // type app = "TaoBao" | "Tmall" | "Alipay"
 
 function getPhoto(app: app) {
-    // ...
+  // ...
 }
 
-getPhoto('TaoBao'); // ok
-getPhoto('whatever'); // not ok
+getPhoto("TaoBao"); // ok
+getPhoto("whatever"); // not ok
 ```
 
 我们来一步步解析：
 首先是使用 as const 将数组变为 readonly 的元组类型：
 
 ```ts
-const APP = ['TaoBao', 'Tmall', 'Alipay'] as const;
+const APP = ["TaoBao", "Tmall", "Alipay"] as const;
 // const APP: readonly ["TaoBao", "Tmall", "Alipay"]
 ```
 
@@ -610,16 +610,16 @@ type app = typeof APP[number];
 // type app = "TaoBao" | "Tmall" | "Alipay"
 ```
 
--   条件类型（Conditional Types）
-    很多时候，我们需要基于输入的值来决定输出的值，同样我们也需要基于输入的值的类型来决定输出的值的类型。条件类型（Conditional types）就是用来帮助我们描述输入类型和输出类型之间的关系。
+- 条件类型（Conditional Types）
+  很多时候，我们需要基于输入的值来决定输出的值，同样我们也需要基于输入的值的类型来决定输出的值的类型。条件类型（Conditional types）就是用来帮助我们描述输入类型和输出类型之间的关系。
 
 ```ts
 interface Animal {
-    live(): void;
+  live(): void;
 }
 
 interface Dog extends Animal {
-    woof(): void;
+  woof(): void;
 }
 
 type Example1 = Dog extends Animal ? number : string;
@@ -639,17 +639,17 @@ SomeType extends OtherType ? TrueType : FalseType;
 
 ```ts
 interface IdLabel {
-    id: number /* some fields */;
+  id: number /* some fields */;
 }
 interface NameLabel {
-    name: string /* other fields */;
+  name: string /* other fields */;
 }
 
 function createLabel(id: number): IdLabel;
 function createLabel(name: string): NameLabel;
 function createLabel(nameOrId: string | number): IdLabel | NameLabel;
 function createLabel(nameOrId: string | number): IdLabel | NameLabel {
-    throw 'unimplemented';
+  throw "unimplemented";
 }
 ```
 
@@ -661,41 +661,43 @@ function createLabel(nameOrId: string | number): IdLabel | NameLabel {
 其实我们完全可以用把逻辑写在条件类型中：
 
 ```ts
-type NameOrId<T extends number | string> = T extends number ? IdLabel : NameLabel;
+type NameOrId<T extends number | string> = T extends number
+  ? IdLabel
+  : NameLabel;
 ```
 
 使用这个条件类型，我们可以简化掉函数重载：
 
 ```ts
 function createLabel<T extends number | string>(idOrName: T): NameOrId<T> {
-    throw 'unimplemented';
+  throw "unimplemented";
 }
 
-let a = createLabel('typescript');
+let a = createLabel("typescript");
 // let a: NameLabel
 
 let b = createLabel(2.8);
 // let b: IdLabel
 
-let c = createLabel(Math.random() ? 'hello' : 42);
+let c = createLabel(Math.random() ? "hello" : 42);
 // let c: NameLabel | IdLabel
 ```
 
--   条件类型约束 （Conditional Type Constraints）
-    通常，使用条件类型会为我们提供一些新的信息。正如使用 类型保护（type guards） 可以 收窄类型（narrowing） 为我们提供一个更加具体的类型，条件类型的 true 分支也会进一步约束泛型，举个例子：
+- 条件类型约束 （Conditional Type Constraints）
+  通常，使用条件类型会为我们提供一些新的信息。正如使用 类型保护（type guards） 可以 收窄类型（narrowing） 为我们提供一个更加具体的类型，条件类型的 true 分支也会进一步约束泛型，举个例子：
 
 ```ts
-type MessageOf<T> = T['message'];
+type MessageOf<T> = T["message"];
 // Type '"message"' cannot be used to index type 'T'.
 ```
 
 TypeScript 报错是因为 T 不知道有一个名为 message 的属性。我们可以约束 T，这样 TypeScript 就不会再报错：
 
 ```ts
-type MessageOf<T extends { message: unknown }> = T['message'];
+type MessageOf<T extends { message: unknown }> = T["message"];
 
 interface Email {
-    message: string;
+  message: string;
 }
 
 type EmailMessageContents = MessageOf<Email>;
@@ -707,14 +709,14 @@ type EmailMessageContents = MessageOf<Email>;
 我们可以把约束移出来，然后使用一个条件类型：
 
 ```ts
-type MessageOf<T> = T extends { message: unknown } ? T['message'] : never;
+type MessageOf<T> = T extends { message: unknown } ? T["message"] : never;
 
 interface Email {
-    message: string;
+  message: string;
 }
 
 interface Dog {
-    bark(): void;
+  bark(): void;
 }
 
 type EmailMessageContents = MessageOf<Email>;
@@ -742,7 +744,7 @@ type Num = Flatten<number>;
 
 注意这里使用了索引访问类型 里的 number 索引，用于获取数组元素的类型。
 
--   在条件类型里推断（Inferring Within Conditional Types）
+- 在条件类型里推断（Inferring Within Conditional Types）
 
 条件类型提供了 infer 关键词，可以从正在比较的类型中推断类型，然后在 true 分支里引用该推断结果。借助 infer，我们修改下 Flatten 的实现，不再借助索引访问类型“手动”的获取出来：
 
@@ -755,7 +757,9 @@ type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
 我们也可以使用 infer 关键字写一些有用的 类型帮助别名（helper type aliases）。举个例子，我们可以获取一个函数返回的类型：
 
 ```ts
-type GetReturnType<Type> = Type extends (...args: never[]) => infer Return ? Return : never;
+type GetReturnType<Type> = Type extends (...args: never[]) => infer Return
+  ? Return
+  : never;
 
 type Num = GetReturnType<() => number>;
 // type Num = number
@@ -767,7 +771,7 @@ type Bools = GetReturnType<(a: boolean, b: boolean) => boolean[]>;
 // type Bools = boolean[]
 ```
 
--   分发条件类型（Distributive Conditional Types）
+- 分发条件类型（Distributive Conditional Types）
 
 当在泛型中使用条件类型的时候，如果传入一个联合类型，就会变成 分发的（distributive），举个例子：
 
@@ -807,7 +811,7 @@ type StrArrOrNumArr = ToArrayNonDist<string | number>;
 // type StrArrOrNumArr = (string | number)[]
 ```
 
--   映射类型（Mapped Types）
+- 映射类型（Mapped Types）
 
 有的时候，一个类型需要基于另外一个类型，但是你又不想拷贝一份，这个时候可以考虑使用映射类型。
 
@@ -816,12 +820,12 @@ type StrArrOrNumArr = ToArrayNonDist<string | number>;
 ```ts
 // 当你需要提前声明属性的类型时
 type OnlyBoolsAndHorses = {
-    [key: string]: boolean | Horse;
+  [key: string]: boolean | Horse;
 };
 
 const conforms: OnlyBoolsAndHorses = {
-    del: true,
-    rodney: false,
+  del: true,
+  rodney: false,
 };
 ```
 
@@ -829,7 +833,7 @@ const conforms: OnlyBoolsAndHorses = {
 
 ```ts
 type OptionsFlags<Type> = {
-    [Property in keyof Type]: boolean;
+  [Property in keyof Type]: boolean;
 };
 ```
 
@@ -837,8 +841,8 @@ type OptionsFlags<Type> = {
 
 ```ts
 type FeatureFlags = {
-    darkMode: () => void;
-    newUserProfile: () => void;
+  darkMode: () => void;
+  newUserProfile: () => void;
 };
 
 type FeatureOptions = OptionsFlags<FeatureFlags>;
@@ -848,7 +852,7 @@ type FeatureOptions = OptionsFlags<FeatureFlags>;
 // }
 ```
 
--   映射修饰符（Mapping Modifiers）
+- 映射修饰符（Mapping Modifiers）
 
 在使用映射类型时，有两个额外的修饰符可能会用到，一个是 readonly，用于设置属性只读，一个是 ? ，用于设置属性可选。
 
@@ -857,12 +861,12 @@ type FeatureOptions = OptionsFlags<FeatureFlags>;
 ```ts
 // 删除属性中的只读属性
 type CreateMutable<Type> = {
-    -readonly [Property in keyof Type]: Type[Property];
+  -readonly [Property in keyof Type]: Type[Property];
 };
 
 type LockedAccount = {
-    readonly id: string;
-    readonly name: string;
+  readonly id: string;
+  readonly name: string;
 };
 
 type UnlockedAccount = CreateMutable<LockedAccount>;
@@ -876,13 +880,13 @@ type UnlockedAccount = CreateMutable<LockedAccount>;
 ```ts
 // 删除属性中的可选属性
 type Concrete<Type> = {
-    [Property in keyof Type]-?: Type[Property];
+  [Property in keyof Type]-?: Type[Property];
 };
 
 type MaybeUser = {
-    id: string;
-    name?: string;
-    age?: number;
+  id: string;
+  name?: string;
+  age?: number;
 };
 
 type User = Concrete<MaybeUser>;
@@ -893,13 +897,13 @@ type User = Concrete<MaybeUser>;
 // }
 ```
 
--   通过 as 实现键名重新映射（Key Remapping via as）
+- 通过 as 实现键名重新映射（Key Remapping via as）
 
 在 TypeScript 4.1 及以后，你可以在映射类型中使用 as 语句实现键名重新映射：
 
 ```ts
 type MappedTypeWithNewProperties<Type> = {
-    [Properties in keyof Type as NewKeyType]: Type[Properties];
+  [Properties in keyof Type as NewKeyType]: Type[Properties];
 };
 ```
 
@@ -907,13 +911,15 @@ type MappedTypeWithNewProperties<Type> = {
 
 ```ts
 type Getters<Type> = {
-    [Property in keyof Type as `get${Capitalize<string & Property>}`]: () => Type[Property];
+  [Property in keyof Type as `get${Capitalize<
+    string & Property
+  >}`]: () => Type[Property];
 };
 
 interface Person {
-    name: string;
-    age: number;
-    location: string;
+  name: string;
+  age: number;
+  location: string;
 }
 
 type LazyPerson = Getters<Person>;
@@ -930,12 +936,12 @@ type LazyPerson = Getters<Person>;
 ```ts
 // Remove the 'kind' property
 type RemoveKindField<Type> = {
-    [Property in keyof Type as Exclude<Property, 'kind'>]: Type[Property];
+  [Property in keyof Type as Exclude<Property, "kind">]: Type[Property];
 };
 
 interface Circle {
-    kind: 'circle';
-    radius: number;
+  kind: "circle";
+  radius: number;
 }
 
 type KindlessCircle = RemoveKindField<Circle>;
@@ -949,11 +955,11 @@ type KindlessCircle = RemoveKindField<Circle>;
 
 ```ts
 type EventConfig<Events extends { kind: string }> = {
-    [E in Events as E['kind']]: (event: E) => void;
+  [E in Events as E["kind"]]: (event: E) => void;
 };
 
-type SquareEvent = { kind: 'square'; x: number; y: number };
-type CircleEvent = { kind: 'circle'; radius: number };
+type SquareEvent = { kind: "square"; x: number; y: number };
+type CircleEvent = { kind: "circle"; radius: number };
 
 type Config = EventConfig<SquareEvent | CircleEvent>;
 // type Config = {
@@ -962,18 +968,18 @@ type Config = EventConfig<SquareEvent | CircleEvent>;
 // }
 ```
 
--   深入探索（Further Exploration）
+- 深入探索（Further Exploration）
 
 映射类型也可以跟其他的功能搭配使用，举个例子，这是一个使用条件类型的映射类型，会根据对象是否有 pii 属性返回 true 或者 false :
 
 ```ts
 type ExtractPII<Type> = {
-    [Property in keyof Type]: Type[Property] extends { pii: true } ? true : false;
+  [Property in keyof Type]: Type[Property] extends { pii: true } ? true : false;
 };
 
 type DBFields = {
-    id: { format: 'incrementing' };
-    name: { type: string; pii: true };
+  id: { format: "incrementing" };
+  name: { type: string; pii: true };
 };
 
 type ObjectsNeedingGDPRDeletion = ExtractPII<DBFields>;
@@ -983,14 +989,14 @@ type ObjectsNeedingGDPRDeletion = ExtractPII<DBFields>;
 // }
 ```
 
--   模板字面量类型（Template Literal Types）
+- 模板字面量类型（Template Literal Types）
 
 模板字面量类型以字符串字面量类型为基础，可以通过联合类型扩展成多个字符串。
 
 它们跟 JavaScript 的模板字符串是相同的语法，但是只能用在类型操作中。当使用模板字面量类型时，它会替换模板中的变量，返回一个新的字符串字面量：
 
 ```ts
-type World = 'world';
+type World = "world";
 
 type Greeting = `hello ${World}`;
 // type Greeting = "hello world"
@@ -999,8 +1005,8 @@ type Greeting = `hello ${World}`;
 当模板中的变量是一个联合类型时，每一个可能的字符串字面量都会被表示：
 
 ```ts
-type EmailLocaleIDs = 'welcome_email' | 'email_heading';
-type FooterLocaleIDs = 'footer_title' | 'footer_sendoff';
+type EmailLocaleIDs = "welcome_email" | "email_heading";
+type FooterLocaleIDs = "footer_title" | "footer_sendoff";
 
 type AllLocaleIDs = `${EmailLocaleIDs | FooterLocaleIDs}_id`;
 // type AllLocaleIDs = "welcome_email_id" | "email_heading_id" | "footer_title_id" | "footer_sendoff_id"
@@ -1010,21 +1016,20 @@ type AllLocaleIDs = `${EmailLocaleIDs | FooterLocaleIDs}_id`;
 
 ```ts
 type AllLocaleIDs = `${EmailLocaleIDs | FooterLocaleIDs}_id`;
-type Lang = 'en' | 'ja' | 'pt';
+type Lang = "en" | "ja" | "pt";
 
 type LocaleMessageIDs = `${Lang}_${AllLocaleIDs}`;
 // type LocaleMessageIDs = "en_welcome_email_id" | "en_email_heading_id" | "en_footer_title_id" | "en_footer_sendoff_id" | "ja_welcome_email_id" | "ja_email_heading_id" | "ja_footer_title_id" | "ja_footer_sendoff_id" | "pt_welcome_email_id" | "pt_email_heading_id" | "pt_footer_title_id" | "pt_footer_sendoff_id"
 ```
 
--   类型中的字符串联合类型（String Unions in Types）
+- 类型中的字符串联合类型（String Unions in Types）
 
 [例子](https://github.com/mqyqingfeng/Blog/issues/231)
 
--   类
+- 类
 
 [文档](https://github.com/mqyqingfeng/Blog/issues/232)
 [文档](https://github.com/mqyqingfeng/Blog/issues/233)
-
 
 ```ts
 
