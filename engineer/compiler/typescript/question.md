@@ -14,7 +14,7 @@ type: 类型别名。顾名思义它并不是一个类型，只是一个别名�
 type addType = (num1: number, num2: number) => number;
 
 interface addType {
-  (num1: number, num2: number): number;
+    (num1: number, num2: number): number;
 }
 这两种写法都可以定义函数类型;
 ```
@@ -27,22 +27,22 @@ interface 互相继承
 
 ```ts
 interface Person {
-  name: string;
+    name: string;
 }
 interface Student extends Person {
-  grade: number;
+    grade: number;
 }
 ```
 
-interface 集成 type
+interface 继承 type
 
 ```ts
 type Person = {
-  name: string;
+    name: string;
 };
 
 interface Student extends Person {
-  grade: number;
+    grade: number;
 }
 ```
 
@@ -50,7 +50,7 @@ type 继承 type
 
 ```ts
 type Person = {
-  name: string;
+    name: string;
 };
 type Student = Person & { grade: number };
 ```
@@ -59,7 +59,7 @@ type 继承 interface 通过使用交叉类型
 
 ```ts
 interface Person {
-  name: string;
+    name: string;
 }
 
 type Student = Person & { grade: number };
@@ -81,7 +81,7 @@ type arrItem = number | string; // 联合类型
 const arr: arrItem[] = [1, "2", 3];
 
 type Person = {
-  name: Name;
+    name: Name;
 };
 
 type Student = Person & { grade: number }; // 交叉类型
@@ -91,8 +91,8 @@ type Teacher = Person & { major: string };
 type StudentAndTeacherList = [Student, Teacher]; // 元组类型
 
 const list: StudentAndTeacherList = [
-  { name: "lin", grade: 100 },
-  { name: "liu", major: "Chinese" },
+    { name: "lin", grade: 100 },
+    { name: "liu", major: "Chinese" },
 ];
 ```
 
@@ -102,17 +102,17 @@ interface 可以但是 type 不可以的
 
 ```ts
 interface Person {
-  name: string;
+    name: string;
 }
 
 interface Person {
-  // 重复声明 interface，就合并了
-  age: number;
+    // 重复声明 interface，就合并了
+    age: number;
 }
 
 const person: Person = {
-  name: "lin",
-  age: 18,
+    name: "lin",
+    age: 18,
 };
 ```
 
@@ -120,16 +120,16 @@ interface 重复声明会自动合并，但是 type 不行，会报错。
 
 ```ts
 type Person = {
-  name: string;
+    name: string;
 };
 
 type Person = {
-  age: number;
+    age: number;
 };
 
 const person: Person = {
-  name: "lin",
-  age: 18,
+    name: "lin",
+    age: 18,
 };
 ```
 
