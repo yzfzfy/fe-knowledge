@@ -10,10 +10,10 @@ The Single Responsibility Principle， 简称 SRP。这一设计原则的主要�
 
 ```ts
 class Modem {
-  dial: (pno: string) => {};
-  hangup: () => {};
-  send: (s: string) => {};
-  recv: () => {};
+    dial: (pno: string) => {};
+    hangup: () => {};
+    send: (s: string) => {};
+    recv: () => {};
 }
 ```
 
@@ -42,33 +42,33 @@ The Open-Closed Principle, 简称 OCP。这一设计原则的主要思想是拓�
 
 ```ts
 enum ShapeType {
-  circle,
-  square,
+    circle,
+    square,
 }
 
 interface ICircle {
-  type: ShapeType;
-  radius: number;
+    type: ShapeType;
+    radius: number;
 }
 
 interface ISquare {
-  type: ShapeType;
-  size: number;
+    type: ShapeType;
+    size: number;
 }
 
 type IShape = ICircle | ISquare;
 
 function drawAllShapes(list: IShape[]) {
-  for (const item of list) {
-    switch (item.type) {
-      case ShapeType.circle:
-        return drawCircle(item);
-        break;
-      case ShapeType.square:
-        drawSquare(item);
-        break;
+    for (const item of list) {
+        switch (item.type) {
+            case ShapeType.circle:
+                return drawCircle(item);
+                break;
+            case ShapeType.square:
+                drawSquare(item);
+                break;
+        }
     }
-  }
 }
 ```
 
@@ -78,27 +78,27 @@ function drawAllShapes(list: IShape[]) {
 
 ```ts
 class Circle extends ICircle {
-  draw() {}
+    draw() {}
 }
 
 class Square extends ISquare {
-  draw() {}
+    draw() {}
 }
 
 type Shape = Circle | Square;
 
 interface IHook {
-  beforeDraw: (list: Shape[]) => Shape[];
-  afterDraw: (list: Shape[]) => Shape[];
+    beforeDraw: (list: Shape[]) => Shape[];
+    afterDraw: (list: Shape[]) => Shape[];
 }
 
 function drawAllShapes(list: Shape[], hook: IHook) {
-  // 添加 hooks
-  list = hook?.beforeDraw?.(list);
-  for (const item of list) {
-    item.draw();
-  }
-  list = hook?.afterDraw?.(list);
+    // 添加 hooks
+    list = hook?.beforeDraw?.(list);
+    for (const item of list) {
+        item.draw();
+    }
+    list = hook?.afterDraw?.(list);
 }
 ```
 
@@ -110,32 +110,32 @@ The Liskov Substitution Principle, 简称 LSP。这一设计原则的主要思�
 
 ```ts
 class Rectangle {
-  private _w: number = 0;
-  private _h: number = 0;
-  setWidth(width: number) {
-    this._w = width;
-  }
-  setHeight(height: number) {
-    this._h = height;
-  }
-  getWidth() {
-    return this._w;
-  }
-  getHeight() {
-    return this._h;
-  }
+    private _w: number = 0;
+    private _h: number = 0;
+    setWidth(width: number) {
+        this._w = width;
+    }
+    setHeight(height: number) {
+        this._h = height;
+    }
+    getWidth() {
+        return this._w;
+    }
+    getHeight() {
+        return this._h;
+    }
 }
 
 class Square extends Rectangle {
-  setWidth(width: number): void {
-    super.setWidth(width);
-    super.setHeight(width);
-  }
+    setWidth(width: number): void {
+        super.setWidth(width);
+        super.setHeight(width);
+    }
 
-  setHeight(height: number): void {
-    super.setWidth(height);
-    super.setHeight(height);
-  }
+    setHeight(height: number): void {
+        super.setWidth(height);
+        super.setHeight(height);
+    }
 }
 ```
 
@@ -143,8 +143,8 @@ Square 作为子类并不能替换掉基类 Rectangle, Square 在修改高度的
 
 ```ts
 function printWidth(shape: Rectangle) {
-  shape.setHeight(32);
-  console.log(shape.getWidth());
+    shape.setHeight(32);
+    console.log(shape.getWidth());
 }
 
 printWidth(new Square()); // 32
@@ -153,20 +153,20 @@ printWidth(new Rectangle()); // 0
 
 ## 依赖倒置原则
 
-The Dependency Inversion Principle, 简称 DIP。这一设计原则的主要思想是高层模块不应当依赖于低层模块，两者都应该依赖于抽象。
+The Dependency Inversion Principle, 简称 DIP。这一设计原则的主要思想是高层模块不应当依赖于底层模块，两者都应该依赖于抽象。
 
 例如下面这个 Button 类就违反了 DIP:
 
 ```ts
 class Button {
-  private lamp: Lamp = new Lamp();
-  private status = false;
+    private lamp: Lamp = new Lamp();
+    private status = false;
 
-  poll() {
-    this.status = !this.status;
-    const method = this.status ? "turnOn" : "turnOff";
-    this.lamp[method]();
-  }
+    poll() {
+        this.status = !this.status;
+        const method = this.status ? "turnOn" : "turnOff";
+        this.lamp[method]();
+    }
 }
 ```
 
@@ -174,18 +174,18 @@ lamp 耦合在了 Button 中，这意味着 Lamp 类改变时，Button 类会受
 
 ```ts
 class Button {
-  private device: SwitchableDevice;
-  private status = false;
+    private device: SwitchableDevice;
+    private status = false;
 
-  constructor(device: SwitchableDevice) {
-    this.device = device;
-  }
+    constructor(device: SwitchableDevice) {
+        this.device = device;
+    }
 
-  poll() {
-    this.status = !this.status;
-    const method = this.status ? "turnOn" : "turnOff";
-    this.device[method]();
-  }
+    poll() {
+        this.status = !this.status;
+        const method = this.status ? "turnOn" : "turnOff";
+        this.device[method]();
+    }
 }
 
 const lampButton = new Button(new Lamp());
@@ -200,16 +200,16 @@ The Interface Segregation Principle, 简称 ISP。 这一设计原则的主要�
 
 ```ts
 interface IOrder {
-  // 申请
-  apply: () => void;
-  // 审核
-  approve: () => void;
-  // 结束
-  end: () => void;
-  // 切换供应商
-  changeSupplier: () => void;
-  // 切换门店
-  changeShop: () => void;
+    // 申请
+    apply: () => void;
+    // 审核
+    approve: () => void;
+    // 结束
+    end: () => void;
+    // 切换供应商
+    changeSupplier: () => void;
+    // 切换门店
+    changeShop: () => void;
 }
 ```
 
@@ -217,26 +217,26 @@ interface IOrder {
 
 ```ts
 interface IOrder {
-  // 申请
-  apply: () => void;
-  // 审核
-  approve: () => void;
-  // 结束
-  end: () => void;
+    // 申请
+    apply: () => void;
+    // 审核
+    approve: () => void;
+    // 结束
+    end: () => void;
 }
 
 interface IProductOrder extends IOrder {
-  // 切换供应商
-  changeSupplier: () => void;
+    // 切换供应商
+    changeSupplier: () => void;
 }
 
 interface ISaleOrder extends IOrder {
-  // 切换门店
-  changeShop: () => void;
+    // 切换门店
+    changeShop: () => void;
 }
 
 // 产销订单
 interface IProductSaleOrder extends IProductOrder, ISaleOrder {
-  bindSupplierWithShop: () => void;
+    bindSupplierWithShop: () => void;
 }
 ```
